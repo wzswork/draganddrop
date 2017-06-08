@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>dndpc</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="dndpc.css">
+	
+</head>
+<body>
+	<ul>
+	    <li id="dra1" draggable="true">1</li>
+	    <li id="dra2" draggable="true">2</li>
+	    <li id="dra3">3</li>
+	    <li id="dra4">4</li>
+	</ul>
+	<div class="container">
+		
+	</div>
+	<script src="dndpc.js"></script>
+	<script type="text/javascript">
+		
+
+		var dnd = window.dnd;
+		dnd.init({
+			container: document.querySelector('.container'),
+			items: [
+			{
+				dom: document.getElementById('dra1'),
+				iconType: 'type1',     //显示的小图标        
+				event:{
+					'click': null    //该元素小图标需要绑定的事件
+				}
+			},
+			{
+				dom: document.getElementById('dra2'),
+				iconType: 'type2',     //显示的小图标        
+				event:{
+					'click': null    //该元素小图标需要绑定的事件
+				}
+			},
+			{
+				dom: document.getElementById('dra3'),
+				iconType: 'type3',     //显示的小图标        
+				event:{
+					'click': null    //该元素小图标需要绑定的事件
+				}
+			},
+			{
+				dom: document.getElementById('dra4'),
+				iconType: 'type4',     //显示的小图标        
+				
+			}],
+			icons: {
+				type1: {
+					src: '../img/DH.gif',
+					event:{
+					'click': null    //该元素小图标需要绑定的事件
+					}
+				},
+				type2: {
+					src: '../img/JA.gif',
+					event:{
+					'click': null    //该元素小图标需要绑定的事件
+					}
+				},
+				type3: {
+					src: '../img/SJ.gif',
+					event:{
+					'click': null    //该元素小图标需要绑定的事件
+					}
+				},
+				type4: {
+					src: '../img/YP.gif',
+					event:{
+					'click': null    //该元素小图标需要绑定的事件
+					}
+				} 
+			}
+		});
+	</script>
+</body>
+</html>
