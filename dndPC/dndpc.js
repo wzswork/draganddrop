@@ -130,7 +130,7 @@
 							moveImg.style.top = (e.clientY - 20) + 'px';
 							moveImg.style.left = (e.clientX - 20) + 'px';
 						}
-						document.body.addEventListener('mouseup', function(e){
+						document.body.onmouseup = function(e){
 							document.body.onmousemove = null;
 							var container = _this.options.container;
 							var cx = container.getBoundingClientRect().left;
@@ -150,6 +150,7 @@
 									var _this = this;
 									var startTop = _this.style.top;
 									var startLeft = _this.style.left;
+									document.body.onmouseup = null;
 
 									document.body.onmousemove = function(e){
 										_this.style.top = (e.clientY -cy - 20) + 'px';
@@ -167,7 +168,7 @@
 									}
 								}
 							}
-						});
+						}
 					});
 				})(i);
 			}
