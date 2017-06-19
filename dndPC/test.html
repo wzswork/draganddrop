@@ -22,6 +22,7 @@
 
 		var dnd = window.dnd;
 		dnd.init({
+			type: 'mouse',
 			container: document.querySelector('.container'),
 			items: [
 			{
@@ -33,7 +34,7 @@
 			},
 			{
 				dom: document.getElementById('dra2'),
-				iconType: 'type2',     //显示的小图标        
+				iconType: 'type',     //显示的小图标        
 				event:{
 					'click': null    //该元素小图标需要绑定的事件
 				}
@@ -54,13 +55,17 @@
 				type1: {
 					src: '../img/DH.gif',
 					event:{
-					'click': null    //该元素小图标需要绑定的事件
+						'click': function(){
+							alert(1);
+						}    //该元素小图标需要绑定的事件
 					}
 				},
-				type2: {
+				type: {
 					src: '../img/JA.gif',
 					event:{
-					'click': null    //该元素小图标需要绑定的事件
+						'click': function(){
+							console.log(2);
+						}    //该元素小图标需要绑定的事件
 					}
 				},
 				type3: {

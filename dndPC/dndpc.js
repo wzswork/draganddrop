@@ -10,11 +10,9 @@
 	  global.dnd = factory();
 	}
 })(typeof window !== 'undefined' ? window : this, function(opts){
-	function isDrag(){
-
-	}
 	var dnd = {
 		options: {
+			type: 'drag',  //拖拽类型H5：drag, 鼠标事件: mouse
 			container: null,  //接受拖拽元素
 			items: [{
 				dom: null,        //被拖拽元素
@@ -26,8 +24,7 @@
 					event:{
 						'click': null    //该元素小图标需要绑定的事件
 					}
-				},
-				type2: 'src'
+				}
 			}
 		},
 		setConfig: function(opts){
@@ -82,7 +79,6 @@
 			this.options.container.addEventListener('drop', function(e){
 				var x = e.offsetX-20;
 				var y = e.offsetY-20;
-				var item = e.dataTransfer.item;
 				var isAdd = e.dataTransfer.getData('isAdd');
 				if(isAdd == "true"){
 					var type = e.dataTransfer.getData('iconType');
@@ -98,6 +94,7 @@
 					}
 					icon.id = new Date();
 					icon.addEventListener('dragstart', function(e){
+						e.dataTransfer.setDragImage(_this.iconImg[type], 20, 20);
 						e.dataTransfer.effectAllowed = "move";
 						e.dataTransfer.setData('isAdd', false);
 						e.dataTransfer.setData('id', e.target.id);
@@ -105,8 +102,14 @@
 				}else{
 					var id = e.dataTransfer.getData('id');
 					var moveIcon = document.getElementById(id);
-					moveIcon.style.left = x+'px';
-					moveIcon.style.top = y+'px';
+					if(e.target == _this.options.container){
+						moveIcon.style.left = x+'px';
+						moveIcon.style.top = y+'px';
+					}else{
+						moveIcon.style.left = x + e.target.offsetLeft +'px';
+						moveIcon.style.top = y + e.target.offsetTop +'px';
+					}
+					
 				}
 				
 			});
@@ -124,11 +127,13 @@
 						document.body.appendChild(moveImg);
 						moveImg.draggable = false;
 						moveImg.style.position = "fixed";
-						moveImg.style.top = (e.clientY - 20) + 'px';
-						moveImg.style.left = (e.clientX - 20) + 'px';
+						var skewingX = moveImg.width/2;  //鼠标偏移量
+						var skewingY = moveImg.height/2;
+						moveImg.style.top = (e.clientY - skewingY) + 'px';
+						moveImg.style.left = (e.clientX - skewingX) + 'px';
 						document.body.onmousemove = function(e){
-							moveImg.style.top = (e.clientY - 20) + 'px';
-							moveImg.style.left = (e.clientX - 20) + 'px';
+							moveImg.style.top = (e.clientY - skewingY) + 'px';
+							moveImg.style.left = (e.clientX - skewingX) + 'px';
 						}
 						document.body.onmouseup = function(e){
 							document.body.onmousemove = null;
@@ -137,34 +142,42 @@
 							var cy = container.getBoundingClientRect().top;
 							document.body.removeChild(document.getElementById(moveImg.id));
 							
-							if(!(e.clientY - cy -20 > container.offsetHeight || e.clientY - cy -20 < 0 || e.clientX - cx -20 > container.offsetWidth || e.clientX - cx -20 < 0)){
+							if(!(e.clientY - cy -skewingY > container.offsetHeight || e.clientY - cy -skewingY < 0 || e.clientX - cx -skewingX > container.offsetWidth || e.clientX - cx -skewingX < 0)){
 								var icon = new Image();
 								icon.src = moveImg.src;
 								icon.draggable = false;
 								container.appendChild(icon);
 								icon.style.position = 'absolute';
-								icon.style.top = (e.clientY - cy -20) + 'px';
-								icon.style.left = (e.clientX - cx -20) + 'px';
+								icon.style.top = (e.clientY - cy -skewingY) + 'px';
+								icon.style.left = (e.clientX - cx -skewingX) + 'px';
 								
 								icon.onmousedown = function(e){
-									var _this = this;
-									var startTop = _this.style.top;
-									var startLeft = _this.style.left;
+									var that = this;
+									var startTop = that.style.top;
+									var startLeft = that.style.left;
 									document.body.onmouseup = null;
 
 									document.body.onmousemove = function(e){
-										_this.style.top = (e.clientY -cy - 20) + 'px';
-										_this.style.left = (e.clientX -cx - 20) + 'px';
+										var top = e.clientY -cy - skewingY;
+										var left = e.clientX -cx - skewingX;
+										if(top + that.height -skewingY > _this.options.container.offsetHeight){
+											top = _this.options.container.offsetHeight - that.height +skewingY;
+										}
+										if(top < - skewingY){
+											top = - skewingY;
+										}
+										if(left + that.width -skewingX > _this.options.container.offsetWidth){
+											left = _this.options.container.offsetWidth - that.width +skewingX;
+										}
+										if(left < - skewingX){
+											left = - skewingX;
+										}
+										that.style.top = top + 'px';
+										that.style.left = left + 'px';
 									}
 
 									document.body.onmouseup = function(e){
 										document.body.onmousemove = null;
-										var top = _this.style.top.split('px')[0];
-										var left = _this.style.left.split('px')[0];
-										if(top > container.offsetHeight || top < 0 || left > container.offsetWidth || left < 0){
-											_this.style.top = startTop;
-											_this.style.left = startLeft;
-										}
 									}
 								}
 							}
@@ -175,7 +188,12 @@
 			return this;
 		},
 		init: function(opts){
-			this.setConfig(opts).setCss().setIconImg().bindMouseEvent();
+			this.setConfig(opts).setCss().setIconImg();
+			if(opts.type == 'mouse'){
+				this.bindMouseEvent();
+			}else{
+				this.bindDragAndDrop();
+			}
 		}
 	}
 
