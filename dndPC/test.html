@@ -8,80 +8,16 @@
 </head>
 <body>
 	<ul>
-	    <li id="dra1" draggable="true">1</li>
-	    <li id="dra2" draggable="true">2</li>
-	    <li id="dra3">3</li>
-	    <li id="dra4">4</li>
+	    <li class="dragitem" draggable='true' data-src='' data-icon-type="img">1</li>
+	    <li class="dragitem" draggable='true' data-src='' data-icon-type="word">2</li>
+	    <li class="dragitem" draggable='true' data-src='' data-icon-type="video">3</li>
+	    <li class="dragitem" draggable='true' data-src='' data-icon-type="audio">4</li>
 	</ul>
-	<div class="container">
-		
-	</div>
+	<div class="drag-container"></div>
 	<script src="dndpc.js"></script>
 	<script type="text/javascript">
-		
-
-		var dnd = window.dnd;
-		dnd.init({
-			type: 'mouse',
-			container: document.querySelector('.container'),
-			items: [
-			{
-				dom: document.getElementById('dra1'),
-				iconType: 'type1',     //显示的小图标        
-				event:{
-					'click': null    //该元素小图标需要绑定的事件
-				}
-			},
-			{
-				dom: document.getElementById('dra2'),
-				iconType: 'type',     //显示的小图标        
-				event:{
-					'click': null    //该元素小图标需要绑定的事件
-				}
-			},
-			{
-				dom: document.getElementById('dra3'),
-				iconType: 'type3',     //显示的小图标        
-				event:{
-					'click': null    //该元素小图标需要绑定的事件
-				}
-			},
-			{
-				dom: document.getElementById('dra4'),
-				iconType: 'type4',     //显示的小图标        
-				
-			}],
-			icons: {
-				type1: {
-					src: '../img/DH.gif',
-					event:{
-						'click': function(){
-							alert(1);
-						}    //该元素小图标需要绑定的事件
-					}
-				},
-				type: {
-					src: '../img/JA.gif',
-					event:{
-						'click': function(){
-							console.log(2);
-						}    //该元素小图标需要绑定的事件
-					}
-				},
-				type3: {
-					src: '../img/SJ.gif',
-					event:{
-					'click': null    //该元素小图标需要绑定的事件
-					}
-				},
-				type4: {
-					src: '../img/YP.gif',
-					event:{
-					'click': null    //该元素小图标需要绑定的事件
-					}
-				} 
-			}
-		});
+		var drag = window.drag;
+		drag.init();
 	</script>
 </body>
 </html>
