@@ -13,7 +13,8 @@
 	var moveImg, //未创建的元素拖动图片
 		moveIcon, //已存在的元素图标
 		startTop,startLeft,  //容器中元素的初始坐标
-		skewingX,skewingY;  //鼠标偏移量
+		skewingX,skewingY,  //鼠标偏移量
+		zindex = 1001;   
 
 	var drag = {
 		iconData: [],    // 存储容器中所有icon的参数
@@ -124,7 +125,7 @@
 				icon.addEventListener('dragstart', _h5dragstart);
 
 				icon.addEventListener('drag', function(e){
-					e.target.style.display = 'none';
+					e.target.style.opacity = 0;
 				});
 
 				icon.addEventListener('dragend', _h5dragend);
@@ -210,6 +211,8 @@
 		icon.style.position = 'absolute';
 		icon.style.left = (e.pageX - 20 - drag.options.container.offsetLeft)+'px';
 		icon.style.top = (e.pageY - 29 - drag.options.container.offsetTop)+'px';
+		icon.style.zIndex = zindex;
+		zindex++;
 		icon.dataset.src = edata.datasrc;
 		return icon;
 	}
@@ -217,10 +220,8 @@
 	// H5图标拖动开始
 	function _h5dragstart(e){
 		drag.activeElement = this;
-		if(e.dataTransfer.setDragImage){
-			e.dataTransfer.setDragImage(drag.iconImg[e.target.dataset.iconType], e.offsetX-1, e.offsetY-1);
-		}
-		
+		this.style.zIndex = zindex;
+		zindex++;
 		e.dataTransfer.effectAllowed = "move";
 		e.target.dataset.id = e.target.id;
 		e.target.dataset.skewingX = e.offsetX;
@@ -236,7 +237,7 @@
 
 	//H5图标拖动结束
 	function _h5dragend(e){
-		e.target.style.display = 'block';
+		e.target.style.opacity = 1;
 		e.preventDefault();
 	}
 
@@ -278,6 +279,7 @@
 		icon.setAttribute('data-icon-type', moveImg.getAttribute('data-icon-type'));
 		icon.id = new Date().getTime();
 		icon.setAttribute('draggable', false);
+		icon.setAttribute('ondragstart','return false;');
 		icon.style.position = 'absolute';
 		icon.style.top = (moveImg.offsetTop - cy) + 'px';
 		icon.style.left = (moveImg.offsetLeft - cx) + 'px';
