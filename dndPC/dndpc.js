@@ -23,7 +23,7 @@
 			container: document.querySelector('.drag-container'),  //接受拖拽元素
 			items: document.querySelectorAll('.dragitem'),
 			icons: {            //图标种类s
-				img: '../img/static.jpg',
+				img: '../img/JA.gif',
 				video: '../img/DH.gif',
 				audio: '../img/YP.gif',
 				word: '../img/SJ.gif'
@@ -53,7 +53,12 @@
 		},
 		bindIconEvents: function () {
 			this.options.container.addEventListener('click',function(e){
-				var iconType = e.target.dataset.iconType;
+				var className = e.target.className;
+				if(className == 'unclick'){
+					e.target.className = '';
+					return;
+				}
+				var iconType = e.target.getAttribute('data-icon-type');
 				switch(iconType){
 					case 'img': _imgFuc();break;
 					case 'video': _videoFuc();break;
@@ -75,11 +80,7 @@
 							datasrc: items[i].dataset.src
 						}
 						e.dataTransfer.setData("text",JSON.stringify(obj));
-
-						// if(e.dataTransfer.setDragImage){
-							e.dataTransfer.setDragImage(drag.iconImg[e.target.dataset.iconType], 20, 29, e.pageY-29, e.pageX-20);
-						// }
-						// e.dataTransfer.setDragImage(_this.iconImg[items[i].dataset.iconType], 20, 29);
+						e.dataTransfer.setDragImage(drag.iconImg[e.target.dataset.iconType], 20, 29);
 						e.dataTransfer.effectAllowed = "move";
 					});
 				})(i);
@@ -190,7 +191,7 @@
 			return this.iconData;
 		},
 		init: function(opts){
-			this.setConfig(opts).setIconImg();
+			this.setConfig(opts).setIconImg().bindIconEvents();
 			if(_isMobilePlatform() || this.options.type == 'mouse' || _isIE()){
 				this.bindMouseEvent();
 			}else if(this.options.type == 'drag'){
@@ -241,13 +242,20 @@
 		e.preventDefault();
 	}
 
-
 	// 新元素鼠标移动事件
 	function _moveFuc(e){
 		e.clientY = e.clientY||e.touches[0].clientY;
 		e.clientX = e.clientX||e.touches[0].clientX;
 		moveImg.style.top = (e.clientY - skewingY) + 'px';
 		moveImg.style.left = (e.clientX - skewingX) + 'px';
+		var container = drag.options.container;
+		var cx = container.getBoundingClientRect().left;
+		var cy = container.getBoundingClientRect().top;
+		if(moveImg.offsetTop - cy < container.offsetHeight && moveImg.offsetTop - cy > 0 && moveImg.offsetLeft - cx < container.offsetWidth && moveImg.offsetLeft - cx > 0){
+			moveImg.style.cursor = 'move';
+		}else{
+			moveImg.style.cursor = 'not-allowed';
+		}
 	}
 
 	// 新元素鼠标up事件
@@ -283,6 +291,7 @@
 		icon.style.position = 'absolute';
 		icon.style.top = (moveImg.offsetTop - cy) + 'px';
 		icon.style.left = (moveImg.offsetLeft - cx) + 'px';
+		icon.style.cursor = 'move';
 		return icon;
 	}
 	// 给容器中元素绑定mousedown事件
@@ -297,10 +306,12 @@
 
 	// 容器中元素的移动
 	function _iconMove(e){
+		moveIcon.className = 'unclick';
 		e.clientY = e.clientY||e.touches[0].clientY;
 		e.clientX = e.clientX||e.touches[0].clientX;
-		var cx = drag.options.container.getBoundingClientRect().left;
-		var cy = drag.options.container.getBoundingClientRect().top;
+		var container = drag.options.container;
+		var cx = container.getBoundingClientRect().left;
+		var cy = container.getBoundingClientRect().top;
 		var top = e.clientY -cy - skewingY;
 		var left = e.clientX -cx - skewingX;
 		// if(top + moveIcon.height -skewingY > drag.options.container.offsetHeight){
@@ -317,6 +328,11 @@
 		// }
 		moveIcon.style.top = top + 'px';
 		moveIcon.style.left = left + 'px';
+		if(top + moveIcon.height -skewingY > drag.options.container.offsetHeight || top < - skewingY || left + moveIcon.width -skewingX > drag.options.container.offsetWidth || left < - skewingX){
+			moveIcon.style.cursor = 'not-allowed';
+		}else{
+			moveIcon.style.cursor = 'move';
+		}
 	}
 
 	// 容器中元素鼠标up
@@ -329,6 +345,7 @@
 		if(top + moveIcon.height -skewingY > drag.options.container.offsetHeight || top < - skewingY || left + moveIcon.width -skewingX > drag.options.container.offsetWidth || left < - skewingX){
 			moveIcon.style.top = startTop;
 			moveIcon.style.left = startLeft;
+			moveIcon.style.cursor = 'move';
 		}
 		
 	}
@@ -352,6 +369,20 @@
 	        return true;  
 	    else  
 	        return false;  
+	}
+
+	//icon事件
+	function _imgFuc(){
+		alert('img');
+	}
+	function _videoFuc(){
+		alert('video');
+	}
+	function _audioFuc(){
+		alert('audio');
+	}
+	function _wordFuc(){
+		alert('word');
 	}
 
 	return drag;
